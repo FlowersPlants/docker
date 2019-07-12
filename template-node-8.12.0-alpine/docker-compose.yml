@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  example-web:
+    build: .
+    image: example-web
+    ports:
+      - '3000:3000'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    restart: always
+    container_name: example-web
+    networks:
+      - custom_network
+
+networks:
+  custom_network:
+    external:
+      name: app

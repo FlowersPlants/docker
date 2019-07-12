@@ -1,0 +1,20 @@
+version: '2'
+services:
+  gogs-web:
+    image: gogs/gogs
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /data/docker/gogs/data:/data
+    ports:
+      - '3000:3000'
+      - '3022:22'
+    restart: always
+    container_name: gogs-web
+    networks:
+      - custom_network
+
+networks:
+  custom_network:
+    external:
+      name: app

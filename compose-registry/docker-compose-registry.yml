@@ -1,0 +1,23 @@
+version: '2'
+services:
+  registry:
+    image: registry:2
+    ports:
+      - 5000:5000
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /data/docker/registry/conf/registry-srv.yml:/etc/docker/registry/config.yml:ro
+      - /data/docker/registry/cert/auth.cert:/etc/docker/registry/auth.cert:ro
+      - /data/docker/registry/repositories:/var/lib/registry
+    environment:
+      - REGISTRY_STORAGE_DELETE_ENABLED=true
+    restart: always
+    container_name: registry
+    networks:
+      - custom_network
+
+networks:
+  custom_network:
+    external:
+      name: app

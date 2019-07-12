@@ -1,0 +1,24 @@
+version: '3.1'
+
+services:
+  # mongodb服务
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /data/docker/mongo/data:/data/db
+    container_name: mongo
+    networks:
+      - custom_network
+
+networks:
+  custom_network:
+    external:
+      name: app

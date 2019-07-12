@@ -1,0 +1,24 @@
+version: '3'
+services:
+  # rabbit
+  rabbit3:
+    image: rabbitmq:3-management
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /data/docker/rabbitmq-3:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=root
+    restart: always
+    container_name: rabbit3
+    networks:
+      - custom_network
+
+networks:
+  custom_network:
+    external:
+      name: app

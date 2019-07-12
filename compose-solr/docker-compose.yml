@@ -1,0 +1,16 @@
+version: '2'
+services:
+  solr:
+    image: solr
+    ports:
+      - '8983:8983'
+    volumes:
+      - /data/docker/solr:/opt/solr/server/solr
+    container_name: solr
+    networks:
+      - custom_network
+
+networks:
+  custom_network:
+    external:
+      name: app

@@ -1,0 +1,19 @@
+version: '3'
+services:
+  #管理UI
+  mysql-adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8086:8080
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    container_name: mysql-adminer
+    networks:
+      - custom_network
+
+networks:
+  custom_network:
+    external:
+      name: app

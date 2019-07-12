@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  nginx:
+    image: docker.io/nginx:latest
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /data/docker/nginx/cert:/etc/nginx/cert:ro
+      - /data/docker/nginx/conf:/etc/nginx/conf.d:ro
+      - /data/docker/nginx/logs:/logs
+    ports:
+      - '80:80'
+      - '443:443'
+    restart: always
+    container_name: nginx
+    networks:
+      - custom_network
+
+networks:
+  custom_network:
+    external:
+      name: app

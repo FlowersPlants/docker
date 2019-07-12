@@ -1,0 +1,1 @@
+openssl req -new -newkey rsa:4096 -days 365 -subj "/CN=hub.example.com" -nodes -x509 -keyout cert/auth.key -out cert/auth.cert

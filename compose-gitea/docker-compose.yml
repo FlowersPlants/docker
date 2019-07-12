@@ -1,0 +1,20 @@
+version: '2'
+services:
+  gitea-web:
+    image: gitea/gitea
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /data/docker/gitea/data:/data
+    ports:
+      - '3000:3000'
+      - '3022:22'
+    restart: always
+    container_name: gitea-web
+    networks:
+      - custom_network
+
+networks:
+  custom_network:
+    external:
+      name: app

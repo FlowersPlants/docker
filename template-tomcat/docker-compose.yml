@@ -1,0 +1,19 @@
+version: '2'
+services:
+  tomcat-web:
+    build: .
+    image: tomcat-web
+    ports:
+      - '8080:8080'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    restart: always
+    container_name: tomcat-web
+    networks:
+      - custom_network
+
+networks:
+  custom_network:
+    external:
+      name: app

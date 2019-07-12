@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  example:
+    image: example
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    ports:
+      - '8800:8800'
+      - '20800:20800'
+    environment:
+      - server.port=8800
+      # spring环境变量信息配置
+      # - eureka.instance.hostname=192.168.1.254:8761
+      # - eureka.instance.instance-id=192.168.1.254:8800
+      # - eureka.instance.ip-address=192.168.1.254
+      # dubbo环境变量信息配置
+      # - DUBBO_IP_TO_REGISTRY=192.168.1.254
+      # - DUBBO_PORT_TO_REGISTRY=20800
+      # - DUBBO_PORT_TO_BIND=20800
+    restart: always
+    container_name: example
+    networks:
+      - custom_network
+
+networks:
+  custom_network:
+    external:
+      name: app
