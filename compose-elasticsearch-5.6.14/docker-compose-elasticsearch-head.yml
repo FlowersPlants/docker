@@ -1,0 +1,17 @@
+version: '2.2'
+services:
+  elasticsearch-head:
+    image: mobz/elasticsearch-head:5
+    ports:
+      - 9100:9100
+    container_name: elasticsearch-head
+    networks:
+      - custom_network
+
+volumes:
+  elasticsearch-data:
+
+networks:
+  custom_network:
+    external:
+      name: app
