@@ -1,0 +1,57 @@
+version: '3'
+services:
+  mysql-master:
+    image: docker.io/mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - '3307:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /data/docker/mysql-5.7-master-slave/conf/master:/etc/mysql/conf.d
+      - /data/docker/mysql-5.7-master-slave/data/master:/var/lib/mysql
+    restart: always
+    container_name: mysql-master
+    networks:
+      - custom_network
+
+  mysql-slave01:
+    image: docker.io/mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - '3308:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /data/docker/mysql-5.7-master-slave/conf/slave01:/etc/mysql/conf.d
+      - /data/docker/mysql-5.7-master-slave/data/slave01:/var/lib/mysql
+    restart: always
+    container_name: mysql-slave01
+    networks:
+      - custom_network
+
+  mysql-slave02:
+    image: docker.io/mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - '3309:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /data/docker/mysql-5.7-master-slave/conf/slave02:/etc/mysql/conf.d
+      - /data/docker/mysql-5.7-master-slave/data/slave02:/var/lib/mysql
+    restart: always
+    container_name: mysql-slave02
+    networks:
+      - custom_network
+
+networks:
+  custom_network:
+    external:
+      name: app

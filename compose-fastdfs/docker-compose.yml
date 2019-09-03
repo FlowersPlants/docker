@@ -1,0 +1,42 @@
+version: '3.1'
+
+services:
+  fastdfs-trakcer:
+    image: season/fastdfs
+    restart: always
+    ports:
+      - 22122:22122
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /data/docker/fastdfs-trakcer/data:/fastdfs/tracker/data
+    container_name: fastdfs-trakcer
+    networks:
+      - custom_network
+    command: tracker
+
+  fastdfs-storage:
+    image: season/fastdfs
+    restart: always
+    ports:
+      - 8888:8888
+      - 23000:23000
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /data/docker/fastdfs-storage/data:/fastdfs/storage/data
+      - /data/docker/fastdfs-storage/store_path:/fastdfs/store_path
+    environment:
+      - TRACKER_SERVER:fastdfs-trakcer:22122
+      - GROUP_NAME:group1
+    container_name: fastdfs-storage
+    depends_on:
+      - fastdfs-trakcer
+    networks:
+      - custom_network
+    command: storage
+
+networks:
+  custom_network:
+    external:
+      name: app
