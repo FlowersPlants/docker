@@ -1,0 +1,59 @@
+version: '3.1'
+services:
+  elasticsearch-central:
+    image: elasticsearch:5.6.4
+    environment:
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+      - 'ES_CLUSTERNAME=elasticsearch'
+      # 警用xpack的安全控制，许可证默认30天
+      - 'xpack.security.enabled=false'
+    command: elasticsearch
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    volumes:
+      - elasticsearch-central-data:/usr/share/elasticsearch/data
+      - /data/docker/elasticsearch-5.6.14-cluster/nodes/central/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    container_name: elasticsearch-central
+    networks:
+      - custom_network
+
+  elasticsearch-node-es1:
+    image: elasticsearch:5.6.4
+    environment:
+      - bootstrap.memory_lock=true
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+      - ES_CLUSTERNAME=elasticsearch
+      # 警用xpack的安全控制，许可证默认30天
+      - 'xpack.security.enabled=false'
+    command: elasticsearch
+    depends_on:
+      - elasticsearch-central
+    ports:
+      - '9201:9200'
+      - '9301:9300'
+    volumes:
+      - elasticsearch-node-es1-data:/usr/share/elasticsearch/data
+      - /data/docker/elasticsearch-5.6.14-cluster/nodes/es1/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    container_name: elasticsearch-node-es1
+    networks:
+      - custom_network
+
+  elasticsearch-head:
+    image: mobz/elasticsearch-head:5
+    ports:
+      - '9100:9100'
+    depends_on:
+      - elasticsearch-central
+    container_name: elasticsearch-head
+    networks:
+      - custom_network
+
+volumes:
+  elasticsearch-central-data:
+  elasticsearch-node-es1-data:
+
+networks:
+  custom_network:
+    external:
+      name: app

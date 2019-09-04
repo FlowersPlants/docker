@@ -2,41 +2,52 @@ version: '3.1'
 
 services:
   fastdfs-trakcer:
-    image: season/fastdfs
+    image: season/fastdfs:1.2
     restart: always
-    ports:
-      - 22122:22122
+    # ports:
+    #   - 22122:22122
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-      - /data/docker/fastdfs-trakcer/data:/fastdfs/tracker/data
+      - /data/docker/fastdfs/trakcer/data:/fastdfs/tracker/data
     container_name: fastdfs-trakcer
-    networks:
-      - custom_network
+    network_mode: 'host'
     command: tracker
 
   fastdfs-storage:
-    image: season/fastdfs
+    image: season/fastdfs:1.2
     restart: always
-    ports:
-      - 8888:8888
-      - 23000:23000
+    # ports:
+    #   - 8888:8888
+    #   - 23000:23000
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-      - /data/docker/fastdfs-storage/data:/fastdfs/storage/data
-      - /data/docker/fastdfs-storage/store_path:/fastdfs/store_path
+      - /data/docker/fastdfs/storage/data:/fastdfs/storage/data
+      - /data/docker/fastdfs/storage/store_path:/fastdfs/store_path
     environment:
       - TRACKER_SERVER:fastdfs-trakcer:22122
       - GROUP_NAME:group1
     container_name: fastdfs-storage
     depends_on:
       - fastdfs-trakcer
-    networks:
-      - custom_network
+    network_mode: 'host'
     command: storage
 
-networks:
-  custom_network:
-    external:
-      name: app
+  fastdfs-nginx:
+    image: season/fastdfs:1.2
+    restart: always
+    # ports:
+    #   - 8800:80
+    volumes:
+      - '/etc/timezone:/etc/timezone:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/docker/fastdfs/nginx.conf:/etc/nginx/conf/nginx.conf'
+      - '/data/docker/fastdfs/storage/store_path:/fastdfs/store_path'
+    environment:
+      - TRACKER_SERVER:fastdfs-trakcer:22122
+    container_name: fastdfs-nginx
+    depends_on:
+      - fastdfs-trakcer
+    network_mode: 'host'
+    command: 'nginx'
