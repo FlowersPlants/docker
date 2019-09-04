@@ -1,0 +1,50 @@
+version: '3.1'
+services:
+  fastdfs-tracker:
+    image: season/fastdfs:1.2
+    restart: always
+    volumes:
+      - '/etc/timezone:/etc/timezone:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/docker/fastdfs-1.2/tracker/data:/fastdfs/tracker/data'
+    # 需要开启 22122 23000 端口
+    network_mode: 'host'
+    command: 'tracker'
+    container_name: fastdfs-tracker
+
+  fastdfs-storage:
+    image: season/fastdfs:1.2
+    restart: always
+    volumes:
+      - '/etc/timezone:/etc/timezone:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/docker/fastdfs-1.2/storage/base_path:/fastdfs/storage/data'
+      - '/data/docker/fastdfs-1.2/storage/store_path0:/fastdfs/store_path'
+    environment:
+      # fastdfs ip地址
+      TRACKER_SERVER: 'IP:22122'
+      # 组名
+      GROUP_NAME: 'group1'
+    # 需要开启 22122 23000 端口
+    network_mode: 'host'
+    command: 'storage'
+    depends_on:
+      - fastdfs-tracker
+    container_name: fastdfs-storage
+
+  fastdfs-nginx:
+    image: season/fastdfs:1.2
+    restart: always
+    volumes:
+      - '/etc/timezone:/etc/timezone:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/docker/fastdfs-1.2/nginx.conf:/etc/nginx/conf/nginx.conf'
+      - '/data/docker/fastdfs-1.2/storage/store_path0:/fastdfs/store_path'
+    environment:
+      # fastdfs ip地址
+      TRACKER_SERVER: 'IP:22122'
+    network_mode: 'host'
+    command: 'nginx'
+    depends_on:
+      - fastdfs-storage
+    container_name: fastdfs-nginx
