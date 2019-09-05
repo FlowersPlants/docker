@@ -5,6 +5,7 @@ services:
     ports:
       - 9100:9100
     container_name: elasticsearch-head
+    restart: always
     networks:
       - custom_network
 
