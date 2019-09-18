@@ -1,7 +1,7 @@
 version: '2'
 services:
   gitea-web:
-    image: gitea/gitea
+    image: gitea/gitea:1.9.3
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro

@@ -3,16 +3,17 @@ version: '3'
 services:
   jenkins:
     build: .
-    image: jenkins
+    image: docker/jenkins:lts
     ports:
       - '8083:8080'
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
       - /usr/bin/docker:/usr/bin/docker
+      - /usr/local/bin/docker-compose:/usr/bin/docker-compose
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/lib64/libltdl.so.7:/usr/lib/x86_64-linux-gnu/libltdl.so.7
-      - /data/docker/jenkins:/var/jenkins_home
+      - /data/docker/jenkins/jenkins_home:/var/jenkins_home
     restart: always
     container_name: jenkins
     networks:
