@@ -1,0 +1,44 @@
+version: '3'
+services:
+  # postgresql数据库
+  sonarqube-postgresql:
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /data/docker/sonarqube/postgres:/var/lib/postgresql/data
+    restart: always
+    container_name: sonarqube-postgresql
+    networks:
+      - custom_network
+
+  # sonarqube服务
+  sonarqube-server:
+    image: sonarqube:lts
+    ports:
+      - '9000:9000'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /data/docker/sonarqube/conf:/opt/sonarqube/conf
+      - /data/docker/sonarqube/data:/opt/sonarqube/data
+      - /data/docker/sonarqube/logs:/opt/sonarqube/logs
+      - /data/docker/sonarqube/extensions:/opt/sonarqube/extensions
+    environment:
+      - sonar.jdbc.username=sonar
+      - sonar.jdbc.password=sonar
+      - sonar.jdbc.url=jdbc:postgresql://sonarqube-postgresql:5432/sonar
+    restart: always
+    container_name: sonarqube-server
+    depends_on:
+      - sonarqube-postgresql
+    networks:
+      - custom_network
+
+networks:
+  custom_network:
+    external:
+      name: app
