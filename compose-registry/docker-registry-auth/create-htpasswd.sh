@@ -1,0 +1,1 @@
+docker run --rm=true --entrypoint htpasswd registry -Bbn  username  userpasswd > auth/htpasswd
