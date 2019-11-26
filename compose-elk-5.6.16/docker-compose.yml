@@ -1,0 +1,87 @@
+version: '3'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    environment:
+      - 'discovery.type=single-node'
+      - 'xpack.security.enabled=false'
+      - 'ES_JAVA_OPTS=-Xms256m -Xmx256m'
+    volumes:
+      - data:/usr/share/elasticsearch/data
+      - /data/docker/elk-5.6.16/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    restart: 'always'
+    container_name: elasticsearch
+    networks:
+      - custom_network
+
+  elasticsearch-head:
+    image: mobz/elasticsearch-head:5
+    ports:
+      - 9100:9100
+    depends_on:
+      - elasticsearch
+    restart: 'always'
+    container_name: elasticsearch-head
+    networks:
+      - custom_network
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:5.6.16
+    ports:
+      - '5044:5044'
+      - '4569:4569'
+      - '9600:9600'
+    environment:
+      - 'HTTP_HOST=0.0.0.0'
+      - 'XPACK_MONITORING_ELASTICSEARCH_URL=http://elasticsearch:9200'
+      - 'XPACK_MONITORING_ELASTICSEARCH_USERNAME='
+      - 'XPACK_MONITORING_ELASTICSEARCH_PASSWORD='
+    volumes:
+      - /data/docker/elk-5.6.16/logstash:/usr/share/logstash/pipeline
+    depends_on:
+      - elasticsearch
+    restart: 'always'
+    container_name: logstash
+    networks:
+      - custom_network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:5.6.16
+    ports:
+      - '5601:5601'
+    environment:
+      - 'SERVER_HOST=0.0.0.0'
+      - 'ELASTICSEARCH_URL=http://elasticsearch:9200'
+      - 'XPACK_MONITORING_UI_CONTAINER_ELASTICSEARCH_ENABLED=false'
+    depends_on:
+      - elasticsearch
+    restart: 'always'
+    container_name: kibana
+    networks:
+      - custom_network
+
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - /data/docker/elk-5.6.16/redis/data:/data
+    restart: always
+    container_name: redis
+    networks:
+      - custom_network
+
+volumes:
+  data:
+
+networks:
+  custom_network:
+    external:
+      name: elk
