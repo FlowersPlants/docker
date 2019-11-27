@@ -1,5 +1,8 @@
 # Default Kibana configuration for docker target
 server.name: kibana
-server.host: "0.0.0.0"
-elasticsearch.hosts: [ "http://elasticsearch:9200" ]
+server.host: '0.0.0.0'
+elasticsearch.hosts: ['http://elasticsearch:9200']
+# elasticsearch.username: 'elastic'
+# elasticsearch.password: '123456'
+
 i18n.locale: zh-CN
