@@ -1,0 +1,9 @@
+# http
+http.host: '0.0.0.0'
+http.port: 9600
+
+# debug
+# config.debug: true
+# log.level: debug
+
+# xpack.monitoring.collection.enabled: false
