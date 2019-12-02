@@ -55,3 +55,70 @@ mysql 设置 root 超级用户只读权限[对整个库表设置只读权限]设
   `set global super_read_only=0;`
 - 解锁
   `unlock tables;`
+
+## 常见问题及解决方案
+
+### 主从复制数据不同步
+
+**原因：**因为在同步过程中出现主从数据不一致导致的 
+**解决方法：**
+
+1. **跳过错误数**
+
+   ```mysql
+   -- 查看主库状态，需要切换到主库
+   show master status; 
+   
+   -- 以下操作需要切换到对应的从库
+   -- 查看从库状态，
+   show slave status;
+   
+   -- 停止从库
+   stop slave; 
+   
+   -- 设置跳过错误书，后面的数值可以改动
+   set GLOBAL SQL_SLAVE_SKIP_COUNTER=1000000000;
+   
+   -- 重启从库
+   start slave;
+   
+   show slave status;
+   ```
+
+   
+
+2. **重新设置主从日志位置**
+
+   ```mysql
+   -- master 执行获取 master_log_file 和 master_log_pos
+   show master status; 
+   
+   -- 停止从库
+   stop slave; 
+   
+   -- 修改从库 master_log_file 和 master_log_pos 与主库一致
+   change master to master_host="129.204.194.53", master_user="root", master_password="root", master_port=3307, master_log_file="mysql-bin.000018", master_log_pos=244160466;
+   
+   -- 重启从库
+   start slave;
+   
+   show slave status;
+   ```
+
+### 创建只读权限的账号
+
+```mysql
+-- 使用root用户登录到 Mysql。
+-- mysql -uroot -p
+
+-- 创建用户，并授权SELECT（可选择 select,insert,update,delete ）查询权限，授权远程访问权限，
+-- 注意，命令中username/password指用户名密码，请自己指定。
+-- 若要限制仅指定IP可以使用此用户访问Mysql，将%改为具IP即可。
+GRANT SElECT ON *.* TO 'slave'@'%' IDENTIFIED BY "sjht123456";
+
+-- 刷新mysql权限，使用户创建、授权生效。
+flush privileges;
+```
+
+
+
